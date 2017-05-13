@@ -250,8 +250,8 @@ if [ ! -f $YOUTRACK ]; then
     cd $TOOLS_DIR
     mkdir $YOUTRACK_DIR
     unzip ./*.zip -d $YOUTRACK_DIR
-    mv $YOUTRACK/youtrack*/* $YOUTRACK_DIR
-    rmdir $YOUTRACK/youtrack*
+    mv $YOUTRACK_DIR/youtrack*/* $YOUTRACK_DIR
+    rmdir $YOUTRACK_DIR/youtrack*
     successMessage "Youtrack installed"
 
     touch $YOUTRACK
