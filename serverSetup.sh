@@ -53,7 +53,7 @@ JAVA=$SERVER_SETUP_DIR"java"
 TEAMCITY=$SERVER_SETUP_DIR"teamcity"
 YOUTRACK=$SERVER_SETUP_DIR"youtrack"
 if [ -d $SERVER_SETUP_DIR ]; then
-    infoMessage "Clearing server setup filed dir: "$SERVER_SETUP_DIR
+    infoMessage "Clearing server setup files dir: "$SERVER_SETUP_DIR
 else
     infoMessage $SERVER_SETUP_DIR" not found"
     mkdir $SERVER_SETUP_DIR
