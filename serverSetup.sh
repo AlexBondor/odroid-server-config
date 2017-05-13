@@ -249,6 +249,21 @@ if [ ! -d $TOOLS_DIR ]; then
     successMessage "Created "$TOOLS_DIR
 fi
 
+##
+# Install youtrack
+##
+if [ ! -f $YOUTRACK ]; then
+    infoMessage "Downloading youtrack from: "$YOUTRACK_DOWNLOAD_URL
+    wget -P $TOOLS_DIR $YOUTRACK_DOWNLOAD_URL
+    successMessage "Youtrack downloaded"
+    infoMessage "Installing youtrack.."
+    cd $TOOLS_DIR
+    unzip ./* -d .
+    mv ./* $YOUTRACK_DIR
+    successMessage "Youtrack installed"
+
+    touch $YOUTRACK
+fi
 
 ##
 # Install teamcity
@@ -264,19 +279,3 @@ if [ ! -f $TEAMCITY ]; then
 
     touch $TEAMCITY
 fi
-
-##
-# Install youtrack
-##
-if [ ! -f $YOUTRACK ]; then
-    infoMessage "Downloading youtrack from: "$YOUTRACK_DOWNLOAD_URL
-    wget -P $TOOLS_DIR $YOUTRACK_DOWNLOAD_URL
-    successMessage "Youtrack downloaded"
-    infoMessage "Installing youtrack.."
-    cd $TOOLS_DIR
-    unzip ./* -d .
-    successMessage "Youtrack installed"
-
-    touch $YOUTRACK
-fi
-
