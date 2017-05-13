@@ -15,6 +15,13 @@ GIT_NAME="Alex Bondor"
 
 BOOT_INI_PATH="/media/boot/boot.ini.default"
 
+TEAMCITY_DOWNLOAD_URL="https://download.jetbrains.com/teamcity/TeamCity-2017.1.1.tar.gz"
+YOUTRACK_DOWNLOAD_URL="https://download.jetbrains.com/charisma/youtrack-2017.2.33063.zip"
+
+TOOLS_DIR="/home/odroid/Tools/"
+TEAMCITY_DIR=$TOOLS_DIR"Teamcity"
+YOUTRACK_DIR=$TOOLS_DIR"YouTrack"
+
 ##
 # Server setup files
 ##
@@ -88,6 +95,7 @@ fi
 if [ ! -f $UPDATE ]; then
     infoMessage "Update reposs.."
     apt-get update
+    apt-get upgrade
     successMessage "Repos updated"
 
     touch $UPDATE
@@ -213,8 +221,13 @@ fi
 # Install teamcity
 ##
 if [! -f $TEAMCITY ]; then
+    infoMessage "Downloading teamcity from: " $TEAMCITY_DOWNLOAD_URL
+    mkdir $TEAMCITY_DIR
+    wget -O $TEAMCITY_DIR $TEAMCITY_DOWNLOAD_URL
+    successMessage "Teamcity downloaded"
     infoMessage "Installing teamcity.."
-
+    cd $TEAMCITY_DIR
+    tar xfv ./*
     successMessage "Teamcity installed"
 
     touch $TEAMCITY
@@ -224,8 +237,13 @@ fi
 # Install youtrack
 ##
 if [! -f $YOUTRACK ]; then
+    infoMessage "Downloading youtrack from: " $YOUTRACK_DOWNLOAD_URL
+    mkdir $YOUTRACK_DIR
+    wget -O $YOUTRACK_DIR $YOUTRACK_DOWNLOAD_URL
+    successMessage "Youtrack downloaded"
     infoMessage "Installing youtrack.."
-
+    cd $YOUTRACK_DIR
+    tar xfv ./*
     successMessage "Youtrack installed"
 
     touch $YOUTRACK
