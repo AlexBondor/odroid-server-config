@@ -1,2 +1,0 @@
-# server-config
-Server config
