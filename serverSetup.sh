@@ -104,8 +104,35 @@ apt-get install --yes mysql-server-5.5
 successMessage "Mysql installed"
 
 ##
+# Install ufw
+##
+infoMessage "Installing ufw.."
+apt-get install --yes ufw
+successMessage "Ufw installed"
+infoMessage "Configuring ufw"
+ufw allow "OpenSSH"
+ufw allow "SSH"
+ufw allow "SMTP"
+ufw allow "DNS"
+successMessage "Ufw configured"
+
+##
 # Install nginx
 ##
+infoMessage "Installing nginx.."
+apt-get install --yes nginx
+service nginx stop
+cd $TEMP_DIR
+cd $CONFIG_REPO_NAME
+rm /etc/nginx.conf
+cp ./nginx/nginx.conf /etc/nginx/nginx.conf
+mkdir /etc/nginx/log
+touch /etc/nginx/log/services.qaz123wsx.go.ro.log
+service nginx start
+successMessage "Nginx instaled and configured"
+infoMessage "Configuring ufw"
+ufw allow "Nginx Full"
+successMessage "Ufw configured"
 
 ##
 # Install teamcity
