@@ -111,8 +111,8 @@ fi
 ##
 if [ ! -f $UPDATE ]; then
     infoMessage "Update reposs.."
-    apt-get update
-    apt-get upgrade
+    apt-get update --yes
+    apt-get upgrade --yes
     successMessage "Repos updated"
 
     touch $UPDATE
