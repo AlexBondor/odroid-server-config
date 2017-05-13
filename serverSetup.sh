@@ -16,6 +16,19 @@ GIT_NAME="Alex Bondor"
 BOOT_INI_PATH="/media/boot/boot.ini.default"
 
 ##
+# Increase swap memory
+##
+infoMessage "Increasing swap memory.."
+swapoff /var/swap
+rm /var/swap
+touch /var/swap
+infoMessage "Formatting swap drive"
+dd if=/dev/zero of=/var/swap bs=1024 count=1048576
+mkswap -f /var/swap
+swapon /var/swap
+successMessage "Increased swap memory"
+
+##
 # Configure network
 ##
 NAME="eth0"
