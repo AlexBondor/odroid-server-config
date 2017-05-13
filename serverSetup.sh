@@ -17,9 +17,6 @@ successMessage() {
     echo -e $SUCCESS_COLOR$SUCCESS_MESSAGE$NC $1
 }
 
-infoMessage "info"
-successMessage "success"
-
 ##
 # Global variables
 ##
@@ -44,7 +41,7 @@ YOUTRACK_DIR=$TOOLS_DIR"YouTrack"
 ##
 SERVER_SETUP_DIR="/server-setup-files/"
 SWAP=$SERVER_SETUP_DIR"swap"
-NETWORK=$SERVER_SETUP_DIR"newtwork"
+NETWORK=$SERVER_SETUP_DIR"network"
 UPDATE=$SERVER_SETUP_DIR"update"
 GIT=$SERVER_SETUP_DIR"git"
 TEMP=$SERVER_SETUP_DIR"temp"
@@ -151,6 +148,7 @@ fi
 ##
 if [ ! -f $CLONE ]; then
     infoMessage "Cloning config repo from "$CONFIG_REPO_URL
+    cd $TEMP_DIR
     git clone $CONFIG_REPO_URL
     successMessage "Config repo cloned"
 
@@ -200,7 +198,7 @@ fi
 ##
 # Install nginx
 ##
-if [ ! -f $MYSQL ]; then
+if [ ! -f $NGINX ]; then
     infoMessage "Installing nginx.."
     apt-get install --yes nginx
     service nginx stop
