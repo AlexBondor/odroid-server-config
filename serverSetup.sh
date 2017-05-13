@@ -3,20 +3,26 @@
 ##
 # Utility methods
 ##
+NC="\033[0m"
+INFO_COLOR="\033[0;33m"
+SUCCESS_COLOR="\033[0;32m"
+INFO_MESSAGE="[INFO] server-setup: "
+SUCCESS_MESSAGE="[SUCCESS] server-setup: "
+
 infoMessage() {
-    echo $INFO_MESSAGE $1
+    echo -e $INFO_COLOR$INFO_MESSAGE$NC $1
 }
 
 successMessage() {
-    echo $SUCCESS_MESSAGE $1
+    echo -e $SUCCESS_COLOR$SUCCESS_MESSAGE$NC $1
 }
+
+infoMessage "info"
+successMessage "success"
 
 ##
 # Global variables
 ##
-INFO_MESSAGE="[INFO] server-setup: "
-SUCCESS_MESSAGE="[SUCCESS] server-setup: "
-
 TEMP_DIR="/home/odroid/server-setup-temp"
 
 CONFIG_REPO_NAME="odroid-server-config"
@@ -30,7 +36,7 @@ TEAMCITY_DOWNLOAD_URL="https://download.jetbrains.com/teamcity/TeamCity-2017.1.1
 YOUTRACK_DOWNLOAD_URL="https://download.jetbrains.com/charisma/youtrack-2017.2.33063.zip"
 
 TOOLS_DIR="/home/odroid/Tools/"
-TEAMCITY_DIR=$TOOLS_DIR"Teamcity"
+TEAMCITY_DIR=$TOOLS_DIR"TeamCity"
 YOUTRACK_DIR=$TOOLS_DIR"YouTrack"
 
 ##
@@ -50,11 +56,11 @@ JAVA=$SERVER_SETUP_DIR"java"
 TEAMCITY=$SERVER_SETUP_DIR"teamcity"
 YOUTRACK=$SERVER_SETUP_DIR"youtrack"
 if [ -d $SERVER_SETUP_DIR ]; then
-    infoMessage "Clearing server setup filed dir: " $SERVER_SETUP_DIR
+    infoMessage "Clearing server setup filed dir: "$SERVER_SETUP_DIR
 else
-    infoMessage $SERVER_SETUP_DIR " not found"
+    infoMessage $SERVER_SETUP_DIR" not found"
     mkdir $SERVER_SETUP_DIR
-    successMessage $SERVER_SETUP_DIR " created"
+    successMessage $SERVER_SETUP_DIR" created"
 fi
 
 touch $SWAP
@@ -95,11 +101,11 @@ if [ ! -f $NETWORK ]; then
     DNS="8.8.8.8"
 
     infoMessage "Configuring network.. "
-    infoMessage "Interface name: " $NAME
-    infoMessage "IP: " $IP
-    infoMessage "Mask: " $MASK
-    infoMessage "Gateway: " $GATEWAY
-    infoMessage "DNS: " $DNS
+    infoMessage "Interface name: "$NAME
+    infoMessage "IP: "$IP
+    infoMessage "Mask: "$MASK
+    infoMessage "Gateway: "$GATEWAY
+    infoMessage "DNS: "$DNS
     ifconfig $NAME down;
     ifconfig $NAME $IP netmask $MASK;
     ifconfig $NAME up
@@ -125,7 +131,7 @@ fi
 ##
 # Install git
 ##
-if [ ! -f $GIT]; then
+if [ ! -f $GIT ]; then
     #infoMessage "Installing git.."
     #apt-get install --yes git
     #successMessage "Git installed"
@@ -142,7 +148,7 @@ fi
 # Create temp directory
 ##
 if [ ! -f $TEMP ]; then
-    infoMessage "Create temp directory " $TEMP_DIR ".."
+    infoMessage "Create temp directory "$TEMP_DIR".."
     mkdir $TEMP_DIR
     cd $TEMP_DIR
     successMessage "Temp directory created and moved into"
@@ -154,7 +160,7 @@ fi
 # Clone config repository
 ##
 if [ ! -f $CLONE ]; then
-    infoMessage "Cloning config repo from " $CONFIG_REPO_URL
+    infoMessage "Cloning config repo from "$CONFIG_REPO_URL
     git clone $CONFIG_REPO_URL
     successMessage "Config repo cloned"
 
@@ -187,7 +193,7 @@ fi
 ##
 # Install ufw
 ##
-if [! -f $UFW ]; then
+if [ ! -f $UFW ]; then
     infoMessage "Installing ufw.."
     apt-get install --yes ufw
     successMessage "Ufw installed"
@@ -204,7 +210,7 @@ fi
 ##
 # Install nginx
 ##
-if [! -f $MYSQL ]; then
+if [ ! -f $MYSQL ]; then
     infoMessage "Installing nginx.."
     apt-get install --yes nginx
     service nginx stop
@@ -228,26 +234,31 @@ fi
 ##
 if [ ! -f $JAVA ]; then
     infoMessage "Installing java.."
-    apt install -t jessie-backports  openjdk-8-jre-headless ca-certificates-java
+    apt install --yes -t jessie-backports  openjdk-8-jre-headless ca-certificates-java
     JAVA_HOME="$(find /usr -name "jre")/bin/java"
-    echo $JAVA_HOME >> /etc/environment
+    echo "JAVA_HOME=\""$JAVA_HOME"\"" >> /etc/environment
     source /etc/environment
-    infoMessage "JAVA_HOME set to " $JAVA_HOME
+    infoMessage "JAVA_HOME set to "$JAVA_HOME
     successMessage "Java installed"
 
     touch $JAVA
 fi
 
+if [ ! -d $TOOLS_DIR ]; then
+    mkdir $TOOLS_DIR
+    successMessage "Created "$TOOLS_DIR
+fi
+
+
 ##
 # Install teamcity
 ##
-if [! -f $TEAMCITY ]; then
-    infoMessage "Downloading teamcity from: " $TEAMCITY_DOWNLOAD_URL
-    mkdir $TEAMCITY_DIR
-    wget -O $TEAMCITY_DIR $TEAMCITY_DOWNLOAD_URL
+if [ ! -f $TEAMCITY ]; then
+    infoMessage "Downloading teamcity from: "$TEAMCITY_DOWNLOAD_URL
+    wget -P $TOOLS_DIR $TEAMCITY_DOWNLOAD_URL
     successMessage "Teamcity downloaded"
     infoMessage "Installing teamcity.."
-    cd $TEAMCITY_DIR
+    cd $TOOLS_DIR
     tar xfv ./*
     successMessage "Teamcity installed"
 
@@ -257,14 +268,13 @@ fi
 ##
 # Install youtrack
 ##
-if [! -f $YOUTRACK ]; then
-    infoMessage "Downloading youtrack from: " $YOUTRACK_DOWNLOAD_URL
-    mkdir $YOUTRACK_DIR
-    wget -O $YOUTRACK_DIR $YOUTRACK_DOWNLOAD_URL
+if [ ! -f $YOUTRACK ]; then
+    infoMessage "Downloading youtrack from: "$YOUTRACK_DOWNLOAD_URL
+    wget -P $TOOLS_DIR $YOUTRACK_DOWNLOAD_URL
     successMessage "Youtrack downloaded"
     infoMessage "Installing youtrack.."
-    cd $YOUTRACK_DIR
-    tar xfv ./*
+    cd $TOOLS_DIR
+    unzip ./* -d .
     successMessage "Youtrack installed"
 
     touch $YOUTRACK
