@@ -262,11 +262,11 @@ fi
 ##
 if [ ! -f $TEAMCITY ]; then
     infoMessage "Downloading teamcity from: "$TEAMCITY_DOWNLOAD_URL
-    wget -P $TOOLS_DIR $TEAMCITY_DOWNLOAD_URL
+    #wget -P $TOOLS_DIR $TEAMCITY_DOWNLOAD_URL
     successMessage "Teamcity downloaded"
     infoMessage "Installing teamcity.."
     cd $TOOLS_DIR
-    tar xfv ./*
+    tar xfv ./*.tar.gz
     successMessage "Teamcity installed"
 
     touch $TEAMCITY
