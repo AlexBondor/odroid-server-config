@@ -1,17 +1,23 @@
 #!/bin/bash
 
-# global variables
+##
+# Global variables
+##
 INFO_MESSAGE="[INFO] server-setup: "
 SUCCESS_MESSAGE="[SUCCESS] server-setup: "
 
-TEMP_DIR="/home/server-setup-temp"
+TEMP_DIR="/home/odroid/server-setup-temp"
 
 CONFIG_REPO_NAME="odroid-server-config"
 CONFIG_REPO_URL="https://github.com/AlexBondor/odroid-server-config.git"
 GIT_EMAIL="alexandru.viorel.bondor@gmail.com"
 GIT_NAME="Alex Bondor"
 
-# configure network
+BOOT_INI_PATH="/media/boot/boot.ini.default"
+
+##
+# Configure network
+##
 NAME="eth0"
 IP="192.168.1.200"
 MASK="255.255.255.0"
@@ -31,43 +37,74 @@ route add default gw $GATEWAY;
 echo nameserver $DNS > /etc/resolv.conf; 
 successMessage "Network configured"
 
-# update repos
+##
+# Update repos
+##
 infoMessage "Update reposs.."
 apt-get update
 successMessage "Repos updated"
 
-# enable ssh
-
-# install git
-infoMessage "Installing git.."
-apt-get install --yes git
-successMessage "Git installed"
+##
+# Install git
+##
+#infoMessage "Installing git.."
+#apt-get install --yes git
+#successMessage "Git installed"
 
 infoMessage "Configuring git.."
 git config --global user.email $GIT_EMAIL
 git config --global user.name $GIT_NAME
 successMessage "Git configured"
 
-
-# create temp directory
+##
+# Create temp directory
+##
 infoMessage "Create temp directory " $TEMP_DIR ".."
 mkdir $TEMP_DIR
 cd $TEMP_DIR
 successMessage "Temp directory created and moved into"
 
-# clone config repository
+##
+# Clone config repository
+##
 infoMessage "Cloning config repo from " $CONFIG_REPO_URL
 git clone $CONFIG_REPO_URL
-successMessage "Config repo successfully cloned"
+successMessage "Config repo cloned"
 
-# install mysql
+##
+# Install mysql
+##
+# change mesontimer value from "1" to "0"
+# this is some bug that makes mysql instalation fail
+#infoMessage "Setting up mesontimer in boot.ini"
+#echo "" >> $BOOT_INI_PATH
+#echo "# Custom mesontimer value" >> $BOOT_INI_PATH
+#echo "mesontimer=0" >> $BOOT_INI_PATH
+#echo "" >> $BOOT_INI_PATH
+#bootini
+#successMessage "Set up mesontimer"
 
-# install nginx
+infoMessage "Installing mysql.."
+debconf-set-selections <<< "mysql-server-5.5 mysql-server/root_password password root"
+debconf-set-selections <<< "mysql-server-5.5 mysql-server/root_password_again password root"
+apt-get install --yes mysql-server-5.5
+successMessage "Mysql installed"
 
-# install teamcity
+##
+# Install nginx
+##
 
-# install youtrack
+##
+# Install teamcity
+##
 
+##
+# Install youtrack
+##
+
+##
+# Utility methods
+##
 infoMessage() {
     echo $INFO_MESSAGE $1
 }
