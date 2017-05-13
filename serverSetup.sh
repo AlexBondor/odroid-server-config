@@ -46,6 +46,16 @@ else
     successMessage $SERVER_SETUP_DIR " created"
 fi
 
+touch $SWAP
+touch $NETWORK
+touch $UPDATE
+touch $GIT
+touch $TEMP
+touch $CLONE
+touch $MYSQL
+touch $UFW
+touch $NGINX
+
 ##
 # Increase swap memory
 ##
