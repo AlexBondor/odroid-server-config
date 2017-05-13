@@ -258,8 +258,10 @@ if [ ! -f $YOUTRACK ]; then
     successMessage "Youtrack downloaded"
     infoMessage "Installing youtrack.."
     cd $TOOLS_DIR
-    unzip ./* -d .
-    mv ./* $YOUTRACK_DIR
+    mkdir $YOUTRACK_DIR
+    unzip ./*.zip -d $YOUTRACK_DIR
+    mv $YOUTRACK/youtrack*/* $YOUTRACK_DIR
+    rmdir $YOUTRACK/youtrack*
     successMessage "Youtrack installed"
 
     touch $YOUTRACK
