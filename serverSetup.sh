@@ -1,6 +1,17 @@
 #!/bin/bash
 
 ##
+# Utility methods
+##
+infoMessage() {
+    echo $INFO_MESSAGE $1
+}
+
+successMessage() {
+    echo $SUCCESS_MESSAGE $1
+}
+
+##
 # Global variables
 ##
 INFO_MESSAGE="[INFO] server-setup: "
@@ -59,7 +70,7 @@ touch $NGINX
 ##
 # Increase swap memory
 ##
-if [ ! -f SWAP ]; then
+if [ ! -f $SWAP ]; then
     infoMessage "Increasing swap memory.."
     swapoff /var/swap
     rm /var/swap
@@ -259,13 +270,3 @@ if [! -f $YOUTRACK ]; then
     touch $YOUTRACK
 fi
 
-##
-# Utility methods
-##
-infoMessage() {
-    echo $INFO_MESSAGE $1
-}
-
-successMessage() {
-    echo $SUCCESS_MESSAGE $1
-}
