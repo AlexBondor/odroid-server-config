@@ -16,131 +16,220 @@ GIT_NAME="Alex Bondor"
 BOOT_INI_PATH="/media/boot/boot.ini.default"
 
 ##
+# Server setup files
+##
+SERVER_SETUP_DIR="/server-setup-files/"
+SWAP=$SERVER_SETUP_DIR"swap"
+NETWORK=$SERVER_SETUP_DIR"newtwork"
+UPDATE=$SERVER_SETUP_DIR"update"
+GIT=$SERVER_SETUP_DIR"git"
+TEMP=$SERVER_SETUP_DIR"temp"
+CLONE=$SERVER_SETUP_DIR"clone"
+MYSQL=$SERVER_SETUP_DIR"mysql"
+UFW=$SERVER_SETUP_DIR"ufw"
+NGINX=$SERVER_SETUP_DIR"nginx"
+JAVA=$SERVER_SETUP_DIR"java"
+TEAMCITY=$SERVER_SETUP_DIR"teamcity"
+YOUTRACK=$SERVER_SETUP_DIR"youtrack"
+if [ -d $SERVER_SETUP_DIR ]; then
+    infoMessage "Clearing server setup filed dir: " $SERVER_SETUP_DIR
+else
+    infoMessage $SERVER_SETUP_DIR " not found"
+    mkdir $SERVER_SETUP_DIR
+    successMessage $SERVER_SETUP_DIR " created"
+fi
+
+##
 # Increase swap memory
 ##
-infoMessage "Increasing swap memory.."
-swapoff /var/swap
-rm /var/swap
-touch /var/swap
-infoMessage "Formatting swap drive"
-dd if=/dev/zero of=/var/swap bs=1024 count=1048576
-mkswap -f /var/swap
-swapon /var/swap
-successMessage "Increased swap memory"
+if [ ! -f SWAP ]; then
+    infoMessage "Increasing swap memory.."
+    swapoff /var/swap
+    rm /var/swap
+    touch /var/swap
+    infoMessage "Formatting swap drive"
+    dd if=/dev/zero of=/var/swap bs=1024 count=1048576
+    mkswap -f /var/swap
+    swapon /var/swap
+    successMessage "Increased swap memory"
+
+    touch $SWAP
+fi
 
 ##
 # Configure network
 ##
-NAME="eth0"
-IP="192.168.1.200"
-MASK="255.255.255.0"
-GATEWAY="192.168.1.1"
-DNS="8.8.8.8"
+if [ ! -f $NETWORK ]; then
+    NAME="eth0"
+    IP="192.168.1.200"
+    MASK="255.255.255.0"
+    GATEWAY="192.168.1.1"
+    DNS="8.8.8.8"
 
-infoMessage "Configuring network.. "
-infoMessage "Interface name: " $NAME
-infoMessage "IP: " $IP
-infoMessage "Mask: " $MASK
-infoMessage "Gateway: " $GATEWAY
-infoMessage "DNS: " $DNS
-ifconfig $NAME down;
-ifconfig $NAME $IP netmask $MASK;
-ifconfig $NAME up
-route add default gw $GATEWAY;
-echo nameserver $DNS > /etc/resolv.conf; 
-successMessage "Network configured"
+    infoMessage "Configuring network.. "
+    infoMessage "Interface name: " $NAME
+    infoMessage "IP: " $IP
+    infoMessage "Mask: " $MASK
+    infoMessage "Gateway: " $GATEWAY
+    infoMessage "DNS: " $DNS
+    ifconfig $NAME down;
+    ifconfig $NAME $IP netmask $MASK;
+    ifconfig $NAME up
+    route add default gw $GATEWAY;
+    echo nameserver $DNS > /etc/resolv.conf; 
+    successMessage "Network configured"
+
+    touch $NETWORK
+fi
 
 ##
 # Update repos
 ##
-infoMessage "Update reposs.."
-apt-get update
-successMessage "Repos updated"
+if [ ! -f $UPDATE ]; then
+    infoMessage "Update reposs.."
+    apt-get update
+    successMessage "Repos updated"
+
+    touch $UPDATE
+fi
 
 ##
 # Install git
 ##
-#infoMessage "Installing git.."
-#apt-get install --yes git
-#successMessage "Git installed"
+if [ ! -f $GIT]; then
+    #infoMessage "Installing git.."
+    #apt-get install --yes git
+    #successMessage "Git installed"
 
-infoMessage "Configuring git.."
-git config --global user.email $GIT_EMAIL
-git config --global user.name $GIT_NAME
-successMessage "Git configured"
+    infoMessage "Configuring git.."
+    git config --global user.email $GIT_EMAIL
+    git config --global user.name $GIT_NAME
+    successMessage "Git configured"
+
+    touch $GIT
+fi
 
 ##
 # Create temp directory
 ##
-infoMessage "Create temp directory " $TEMP_DIR ".."
-mkdir $TEMP_DIR
-cd $TEMP_DIR
-successMessage "Temp directory created and moved into"
+if [ ! -f $TEMP ]; then
+    infoMessage "Create temp directory " $TEMP_DIR ".."
+    mkdir $TEMP_DIR
+    cd $TEMP_DIR
+    successMessage "Temp directory created and moved into"
+
+    touch $TEMP
+fi
 
 ##
 # Clone config repository
 ##
-infoMessage "Cloning config repo from " $CONFIG_REPO_URL
-git clone $CONFIG_REPO_URL
-successMessage "Config repo cloned"
+if [ ! -f $CLONE ]; then
+    infoMessage "Cloning config repo from " $CONFIG_REPO_URL
+    git clone $CONFIG_REPO_URL
+    successMessage "Config repo cloned"
+
+    touch $CLONE
+fi
 
 ##
 # Install mysql
 ##
-# change mesontimer value from "1" to "0"
-# this is some bug that makes mysql instalation fail
-#infoMessage "Setting up mesontimer in boot.ini"
-#echo "" >> $BOOT_INI_PATH
-#echo "# Custom mesontimer value" >> $BOOT_INI_PATH
-#echo "mesontimer=0" >> $BOOT_INI_PATH
-#echo "" >> $BOOT_INI_PATH
-#bootini
-#successMessage "Set up mesontimer"
+if [ ! -f $MYSQL ]; then
+    # change mesontimer value from "1" to "0"
+    # this is some bug that makes mysql instalation fail
+    #infoMessage "Setting up mesontimer in boot.ini"
+    #echo "" >> $BOOT_INI_PATH
+    #echo "# Custom mesontimer value" >> $BOOT_INI_PATH
+    #echo "mesontimer=0" >> $BOOT_INI_PATH
+    #echo "" >> $BOOT_INI_PATH
+    #bootini
+    #successMessage "Set up mesontimer"
 
-infoMessage "Installing mysql.."
-debconf-set-selections <<< "mysql-server-5.5 mysql-server/root_password password root"
-debconf-set-selections <<< "mysql-server-5.5 mysql-server/root_password_again password root"
-apt-get install --yes mysql-server-5.5
-successMessage "Mysql installed"
+    infoMessage "Installing mysql.."
+    debconf-set-selections <<< "mysql-server-5.5 mysql-server/root_password password root"
+    debconf-set-selections <<< "mysql-server-5.5 mysql-server/root_password_again password root"
+    apt-get install --yes mysql-server-5.5
+    successMessage "Mysql installed"
+
+    touch $MYSQL
+fi
 
 ##
 # Install ufw
 ##
-infoMessage "Installing ufw.."
-apt-get install --yes ufw
-successMessage "Ufw installed"
-infoMessage "Configuring ufw"
-ufw allow "OpenSSH"
-ufw allow "SSH"
-ufw allow "SMTP"
-ufw allow "DNS"
-successMessage "Ufw configured"
+if [! -f $UFW ]; then
+    infoMessage "Installing ufw.."
+    apt-get install --yes ufw
+    successMessage "Ufw installed"
+    infoMessage "Configuring ufw"
+    ufw allow "OpenSSH"
+    ufw allow "SSH"
+    ufw allow "SMTP"
+    ufw allow "DNS"
+    successMessage "Ufw configured"
+
+    touch $UFW
+fi
 
 ##
 # Install nginx
 ##
-infoMessage "Installing nginx.."
-apt-get install --yes nginx
-service nginx stop
-cd $TEMP_DIR
-cd $CONFIG_REPO_NAME
-rm /etc/nginx.conf
-cp ./nginx/nginx.conf /etc/nginx/nginx.conf
-mkdir /etc/nginx/log
-touch /etc/nginx/log/services.qaz123wsx.go.ro.log
-service nginx start
-successMessage "Nginx instaled and configured"
-infoMessage "Configuring ufw"
-ufw allow "Nginx Full"
-successMessage "Ufw configured"
+if [! -f $MYSQL ]; then
+    infoMessage "Installing nginx.."
+    apt-get install --yes nginx
+    service nginx stop
+    cd $TEMP_DIR
+    cd $CONFIG_REPO_NAME
+    rm /etc/nginx.conf
+    cp ./nginx/nginx.conf /etc/nginx/nginx.conf
+    mkdir /etc/nginx/log
+    touch /etc/nginx/log/services.qaz123wsx.go.ro.log
+    service nginx start
+    successMessage "Nginx instaled and configured"
+    infoMessage "Configuring ufw"
+    ufw allow "Nginx Full"
+    successMessage "Ufw configured"
+
+    touch $NGINX
+fi
+
+##
+# Install java
+##
+if [ ! -f $JAVA ]; then
+    infoMessage "Installing java.."
+    apt install -t jessie-backports  openjdk-8-jre-headless ca-certificates-java
+    JAVA_HOME="$(find /usr -name "jre")/bin/java"
+    echo $JAVA_HOME >> /etc/environment
+    source /etc/environment
+    infoMessage "JAVA_HOME set to " $JAVA_HOME
+    successMessage "Java installed"
+
+    touch $JAVA
+fi
 
 ##
 # Install teamcity
 ##
+if [! -f $TEAMCITY ]; then
+    infoMessage "Installing teamcity.."
+
+    successMessage "Teamcity installed"
+
+    touch $TEAMCITY
+fi
 
 ##
 # Install youtrack
 ##
+if [! -f $YOUTRACK ]; then
+    infoMessage "Installing youtrack.."
+
+    successMessage "Youtrack installed"
+
+    touch $YOUTRACK
+fi
 
 ##
 # Utility methods
