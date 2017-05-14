@@ -34,6 +34,7 @@ YOUTRACK_DOWNLOAD_URL="https://download.jetbrains.com/charisma/youtrack-2017.2.3
 
 TOOLS_DIR="/home/odroid/Tools/"
 TEAMCITY_DIR=$TOOLS_DIR"TeamCity"
+AGENT_DIR=$TEAMCITY"/buildAgent"
 YOUTRACK_DIR=$TOOLS_DIR"YouTrack"
 
 ##
@@ -52,6 +53,7 @@ NGINX=$SERVER_SETUP_DIR"nginx"
 JAVA=$SERVER_SETUP_DIR"java"
 TEAMCITY=$SERVER_SETUP_DIR"teamcity"
 YOUTRACK=$SERVER_SETUP_DIR"youtrack"
+AGENT=$SERVER_SETUP_DIR"agent"
 if [ -d $SERVER_SETUP_DIR ]; then
     infoMessage "Clearing server setup files dir: "$SERVER_SETUP_DIR
 else
@@ -137,7 +139,6 @@ fi
 if [ ! -f $TEMP ]; then
     infoMessage "Create temp directory "$TEMP_DIR".."
     mkdir $TEMP_DIR
-    cd $TEMP_DIR
     successMessage "Temp directory created and moved into"
 
     touch $TEMP
@@ -264,7 +265,19 @@ if [ ! -f $TEAMCITY ]; then
     successMessage "Teamcity downloaded"
     infoMessage "Installing teamcity.."
     cd $TOOLS_DIR
-    tar xfv ./*.tar.gz
+    #tar xfv ./*.tar.gz
+    echo "TEAMCITY_SERVER_MEM_OPTS=-Xmx400m" >> /etc/environment
+    source /etc/environment
+    
+    if [ ! -f $AGENT ]; then
+        infoMessage "Extracting build agent from: "$TEMP_DIR"/"$CONFIG_REPO_NAME"/buildAgent"
+        cd $TOOLS_DIR
+        mkdir $AGENT_DIR
+        unzip $TEMP_DIR/$CONFIG_REPO_NAME/buildAgent/*.zip -d $AGENT_DIR
+        successMessage "Build agent configured"
+
+        touch $AGENT
+    fi
     successMessage "Teamcity installed"
 
     touch $TEAMCITY
