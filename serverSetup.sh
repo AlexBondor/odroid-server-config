@@ -266,9 +266,9 @@ if [ ! -f $TEAMCITY ]; then
     infoMessage "Installing teamcity.."
     cd $TOOLS_DIR
     #tar xfv ./*.tar.gz
-    echo "TEAMCITY_SERVER_MEM_OPTS=-Xmx400m" >> /etc/environment
+    echo "TEAMCITY_SERVER_MEM_OPTS=\"-Xmx400m\"" >> /etc/environment
     source /etc/environment
-    
+
     if [ ! -f $AGENT ]; then
         infoMessage "Extracting build agent from: "$TEMP_DIR"/"$CONFIG_REPO_NAME"/buildAgent"
         cd $TOOLS_DIR
